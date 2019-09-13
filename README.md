@@ -5,4 +5,4 @@ arguments and write it when prompted.
 
 Uses the Levenshtein algorithm to try to guess the best match in cases where the name is spelled wrong.
 
-![](http://i.imgur.com/mql7c4F.png)
+![](http://i.imgur.com/QULPTEh.png)
