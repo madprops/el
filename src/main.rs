@@ -19,7 +19,7 @@ use std::
 
 use termion::
 {
-    color,
+    color, style,
 };
 
 use strsim::
@@ -215,29 +215,37 @@ fn print_list(s: &str, v: Option<Vec<impl Display>>)
 // Displays an element's properties
 fn show_info(el: Element)
 {
-     print("Element", el.name, "");
-     print("Symbol", el.symbol, "");
-     print("Number", el.number, "");
-     print("Period", el.period, "");
-     print("Category", el.category, "title");
-     print("Summary", el.summary, "");
-     print("Discovered By", el.discovered_by, "");
-     print("Named By", el.named_by, "");
-     print("Appearance", el.appearance, "sentence");
-     print("Atomic Mass", el.atomic_mass, "");
-     print("Phase", el.phase, "");
-     print("Density", el.density, "");
-     print("Color", el.color, "title");
-     print("Molar Heat", el.molar_heat, "");
-     print("Melting Point", el.melt, "");
-     print("Boiling Point", el.boil, "");
-     print_list("Shells", el.shells);
-     print("Electron Configuration", el.electron_configuration, "");
-     print("Electron Affinity", el.electron_affinity, "");
-     print("Electronegativity Pauling", el.electronegativity_pauling, "");
-     print_list("Ionization Energies", el.ionization_energies);
-     print("X Pos", el.xpos, "");
-     print("Y Pos", el.ypos, "");
-     print("Source", el.source, "");
-     print("Spectral Image", el.spectral_img, "");
+    p!(format!("\n{}{}{} ({}){}{}\n",
+        style::Bold,
+        color::Fg(color::Cyan), 
+        el.name.unwrap(), 
+        el.symbol.unwrap(), 
+        color::Fg(color::Reset),
+        style::Reset));
+
+    print("Atomic Number", el.number, "");
+    print("Period Number", el.period, "");
+    print("Category", el.category, "title");
+    print("Summary", el.summary, "");
+    print("Discovered By", el.discovered_by, "");
+    print("Named By", el.named_by, "");
+    print("Appearance", el.appearance, "sentence");
+    print("Atomic Mass", el.atomic_mass, "");
+    print("Phase", el.phase, "");
+    print("Density", el.density, "");
+    print("Color", el.color, "title");
+    print("Molar Heat", el.molar_heat, "");
+    print("Melting Point", el.melt, "");
+    print("Boiling Point", el.boil, "");
+    print_list("Shells", el.shells);
+    print("Electron Configuration", el.electron_configuration, "");
+    print("Electron Affinity", el.electron_affinity, "");
+    print("Electronegativity Pauling", el.electronegativity_pauling, "");
+    print_list("Ionization Energies", el.ionization_energies);
+    print("X Pos", el.xpos, "");
+    print("Y Pos", el.ypos, "");
+    print("Source", el.source, "");
+    print("Spectral Image", el.spectral_img, "");
+
+    p!("");
 }
