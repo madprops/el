@@ -1,3 +1,6 @@
+// The elements data is taken from:
+// https://github.com/Bowserinator/Periodic-Table-JSON
+
 mod macros;
 mod structs;
 
