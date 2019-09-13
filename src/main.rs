@@ -14,7 +14,7 @@ use crate::
 
 use std::
 {
-    fs, process, env,
+    process, env,
     io::{self, Write},
     fmt::Display,
     cmp::min,
@@ -101,7 +101,7 @@ fn ask_filter() -> String
 // Reads and parses the JSON file
 fn get_elements() -> Vec<Element>
 {
-    let file = fs::read_to_string("src/elements.json").unwrap();
+    let file = include_str!("elements.json");
     let obj = json::parse(&file).unwrap(); let els = obj["elements"].dump();
     let elements: Vec<Element> = serde_json::from_str(&els).unwrap();
     elements
