@@ -27,9 +27,10 @@ use strsim::
     levenshtein as leven,
 };
 
-use inflections::
+use inflector::
 {
-    case::to_title_case
+    cases::titlecase::to_title_case,
+    cases::sentencecase::to_sentence_case,
 };
 
 const MAX_WIDTH: usize = 80;
@@ -180,11 +181,16 @@ fn print(s: &str, v: Option<impl Display>)
 
         let mut sx = s!(x);
 
-        if sx.split_whitespace().count() < 5
+        if !sx.starts_with("http")
         {
-            if !sx.starts_with("http")
+            if sx.split_whitespace().count() < 5
             {
                 sx = to_title_case(&sx);
+            }
+
+            else
+            {
+                sx = to_sentence_case(&sx);
             }
         }
 
