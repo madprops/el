@@ -168,7 +168,7 @@ fn find_element(els: Vec<Element>, filter: String) -> Option<Element>
 }
 
 // Generic function to print a property
-fn print(s: &str, v: Option<impl Display>)
+fn print(s: &str, v: Option<impl Display>, case: &str)
 {
     if let Some(x) = v
     {
@@ -180,20 +180,8 @@ fn print(s: &str, v: Option<impl Display>)
         }
 
         let mut sx = s!(x);
-
-        if !sx.starts_with("http") && !sx.parse::<f64>().is_ok()
-        {
-            if sx.split_whitespace().count() < 5
-            {
-                sx = to_title_case(&sx);
-            }
-
-            else
-            {
-                sx = to_sentence_case(&sx);
-            }
-        }
-
+        if case == "title" {sx = to_title_case(&sx)}
+        else if case == "sentence" {sx = to_sentence_case(&sx)}
         let n = termion::terminal_size().unwrap().0 as usize - s.len() - 5;
         let txt = textwrap::fill(&sx, min(MAX_WIDTH, n)); let text = s!(textwrap::indent(&txt, &space).trim());
         p!(format!("{}{}{}: {}", color::Fg(color::Blue), s, color::Fg(color::Reset), text))
@@ -227,29 +215,29 @@ fn print_list(s: &str, v: Option<Vec<impl Display>>)
 // Displays an element's properties
 fn show_info(el: Element)
 {
-     print("Element", el.name);
-     print("Symbol", el.symbol);
-     print("Number", el.number);
-     print("Period", el.period);
-     print("Category", el.category);
-     print("Summary", el.summary);
-     print("Discovered By", el.discovered_by);
-     print("Named By", el.named_by);
-     print("Appearance", el.appearance);
-     print("Atomic Mass", el.atomic_mass);
-     print("Phase", el.phase);
-     print("Density", el.density);
-     print("Color", el.color);
-     print("Molar Heat", el.molar_heat);
-     print("Melting Point", el.melt);
-     print("Boiling Point", el.boil);
+     print("Element", el.name, "");
+     print("Symbol", el.symbol, "");
+     print("Number", el.number, "");
+     print("Period", el.period, "");
+     print("Category", el.category, "title");
+     print("Summary", el.summary, "");
+     print("Discovered By", el.discovered_by, "");
+     print("Named By", el.named_by, "");
+     print("Appearance", el.appearance, "sentence");
+     print("Atomic Mass", el.atomic_mass, "");
+     print("Phase", el.phase, "");
+     print("Density", el.density, "");
+     print("Color", el.color, "title");
+     print("Molar Heat", el.molar_heat, "");
+     print("Melting Point", el.melt, "");
+     print("Boiling Point", el.boil, "");
      print_list("Shells", el.shells);
-     print("Electron Configuration", el.electron_configuration);
-     print("Electron Affinity", el.electron_affinity);
-     print("Electronegativity Pauling", el.electronegativity_pauling);
+     print("Electron Configuration", el.electron_configuration, "");
+     print("Electron Affinity", el.electron_affinity, "");
+     print("Electronegativity Pauling", el.electronegativity_pauling, "");
      print_list("Ionization Energies", el.ionization_energies);
-     print("X Pos", el.xpos);
-     print("Y Pos", el.ypos);
-     print("Source", el.source);
-     print("Spectral Image", el.spectral_img);
+     print("X Pos", el.xpos, "");
+     print("Y Pos", el.ypos, "");
+     print("Source", el.source, "");
+     print("Spectral Image", el.spectral_img, "");
 }
