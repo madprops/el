@@ -144,7 +144,6 @@ fn find_element(els: Vec<Element>, filter: String) -> Option<Element>
 
                     if lev < min_lev
                     {
-                        p!(s);
                         min_lev = lev;
                         min_sim = el.clone();
                     }
