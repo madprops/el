@@ -181,7 +181,7 @@ fn print(s: &str, v: Option<impl Display>)
 
         let mut sx = s!(x);
 
-        if !sx.starts_with("http")
+        if !sx.starts_with("http") && !sx.parse::<f64>().is_ok()
         {
             if sx.split_whitespace().count() < 5
             {
