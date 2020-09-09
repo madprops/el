@@ -1,41 +1,32 @@
 #[macro_export]
-macro_rules! p 
-{
-    ($left:expr, $right:expr) => 
-    {
-        println!($left, $right);
-    };
+macro_rules! p {
+  ($left:expr, $right:expr) => {
+    println!($left, $right);
+  };
 
-    ($left:expr) => 
-    {
-        println!("{}", $left);
-    };
+  ($left:expr) => {
+    println!("{}", $left);
+  };
 }
 
 #[macro_export]
-macro_rules! pp 
-{
-    ($left:expr, $right:expr) => 
-    {
-        print!($left, $right);
-    };
+macro_rules! pp {
+  ($left:expr, $right:expr) => {
+    print!($left, $right);
+  };
 
-    ($left:expr) => 
-    {
-        print!("{}", $left);
-    };
+  ($left:expr) => {
+    print!("{}", $left);
+  };
 }
 
 #[macro_export]
-macro_rules! s 
-{
-    ($s: expr) => 
-    {
-        $s.to_string()
-    };
+macro_rules! s {
+  ($s: expr) => {
+    $s.to_string()
+  };
 
-    () => 
-    {
-        String::new()
-    };
+  () => {
+    String::new()
+  };
 }
