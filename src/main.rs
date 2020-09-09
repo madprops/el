@@ -23,8 +23,8 @@ const MAX_WIDTH: usize = 80;
 // Program starts here
 fn main() {
   let filter = match check_arguments() {
-    Some(s) => s,
-    None => ask_filter(),
+    Some(s) => s.to_lowercase(),
+    None => ask_filter().to_lowercase(),
   };
 
   if filter.is_empty() {
