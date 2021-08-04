@@ -152,8 +152,8 @@ fn print(s: &str, v: Option<impl Display>, case: &str) {
     } else if case == "sentence" {
       sx = to_sentence_case(&sx)
     }
-    let n = termion::terminal_size().unwrap().0 as usize - s.len() - 5;
-    let txt = textwrap::fill(&sx, min(MAX_WIDTH, n));
+    
+    let txt = textwrap::fill(&sx, MAX_WIDTH);
     let text = s!(textwrap::indent(&txt, &space).trim());
     p!(format!(
       "{}{}{}: {}",
@@ -183,8 +183,7 @@ fn print_list(s: &str, v: Option<Vec<impl Display>>) {
       space += " ";
     }
 
-    let n = termion::terminal_size().unwrap().0 as usize - s.len() - 5;
-    let txt = textwrap::fill(&sx, min(MAX_WIDTH, n));
+    let txt = textwrap::fill(&sx, MAX_WIDTH);
     let text = s!(textwrap::indent(&txt, &space).trim());
 
     p!("{}", text);
