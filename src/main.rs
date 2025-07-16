@@ -22,7 +22,7 @@ const MAX_WIDTH: usize = 80;
 
 // Program starts here
 fn main() {
-  let (filter_opt, use_colors) = check_arguments();
+  let (filter_opt, use_colors, use_links) = check_arguments();
 
   let filter = match filter_opt {
     Some(s) => s.to_lowercase(),
@@ -35,27 +35,30 @@ fn main() {
 
   match find_element(get_elements(), filter) {
     Some(el) => {
-      show_info(el, use_colors);
+      show_info(el, use_colors, use_links);
     }
     None => exit(),
   }
 }
 
 // Check if arguments were given and process flags
-fn check_arguments() -> (Option<String>, bool) {
+fn check_arguments() -> (Option<String>, bool, bool) {
   let args: Vec<String> = env::args().collect();
   let mut filter = None;
   let mut use_colors = true;
+  let mut use_links = true;
 
   for arg in args.iter().skip(1) {
     if arg == "--no-colors" {
       use_colors = false;
+    } else if arg == "--no-links" {
+      use_links = false;
     } else if filter.is_none() {
       filter = Some(s!(arg));
     }
   }
 
-  (filter, use_colors)
+  (filter, use_colors, use_links)
 }
 
 // Centralized function to exit the program
@@ -210,7 +213,7 @@ fn print_list(s: &str, v: Option<Vec<impl Display>>, use_colors: bool) {
 }
 
 // Displays an element's properties
-fn show_info(el: Element, use_colors: bool) {
+fn show_info(el: Element, use_colors: bool, use_links: bool) {
   if use_colors {
     p!(format!(
       "\n{}{}{} ({}){}{}\n",
@@ -255,8 +258,11 @@ fn show_info(el: Element, use_colors: bool) {
   print_list("Ionization Energies", el.ionization_energies, use_colors);
   print("X Pos", el.xpos, "", use_colors);
   print("Y Pos", el.ypos, "", use_colors);
-  print("Source", el.source, "", use_colors);
-  print("Spectral Image", el.spectral_img, "", use_colors);
+
+  if use_links {
+    print("Source", el.source, "", use_colors);
+    print("Spectral Image", el.spectral_img, "", use_colors);
+  }
 
   p!("");
 }
