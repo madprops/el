@@ -22,7 +22,9 @@ const MAX_WIDTH: usize = 80;
 
 // Program starts here
 fn main() {
-  let filter = match check_arguments() {
+  let (filter_opt, use_colors) = check_arguments();
+
+  let filter = match filter_opt {
     Some(s) => s.to_lowercase(),
     None => ask_filter().to_lowercase(),
   };
@@ -33,24 +35,32 @@ fn main() {
 
   match find_element(get_elements(), filter) {
     Some(el) => {
-      show_info(el);
+      show_info(el, use_colors);
     }
     None => exit(),
   }
 }
 
+// Check if arguments were given and process flags
+fn check_arguments() -> (Option<String>, bool) {
+  let args: Vec<String> = env::args().collect();
+  let mut filter = None;
+  let mut use_colors = true;
+
+  for arg in args.iter().skip(1) {
+    if arg == "--no-colors" {
+      use_colors = false;
+    } else if filter.is_none() {
+      filter = Some(s!(arg));
+    }
+  }
+
+  (filter, use_colors)
+}
+
 // Centralized function to exit the program
 fn exit() -> ! {
   process::exit(0)
-}
-
-// Check if arguments were given
-fn check_arguments() -> Option<String> {
-  let args: Vec<String> = env::args().collect();
-  if args.len() < 2 {
-    return None;
-  }
-  Some(s!(args[1]))
 }
 
 // Centralized function to handle user input
@@ -105,7 +115,7 @@ fn find_element(els: Vec<Element>, filter: String) -> Option<Element> {
           return Some(el.clone());
         }
       }
-      
+
       // Search for name
       if let Some(n) = &el.name {
         let s = n.to_lowercase();
@@ -138,7 +148,7 @@ fn find_element(els: Vec<Element>, filter: String) -> Option<Element> {
 }
 
 // Generic function to print a property
-fn print(s: &str, v: Option<impl Display>, case: &str) {
+fn print(s: &str, v: Option<impl Display>, case: &str, use_colors: bool) {
   if let Some(x) = v {
     let mut space = s!();
 
@@ -152,28 +162,37 @@ fn print(s: &str, v: Option<impl Display>, case: &str) {
     } else if case == "sentence" {
       sx = to_sentence_case(&sx)
     }
-    
+
     let txt = textwrap::fill(&sx, MAX_WIDTH);
     let text = s!(textwrap::indent(&txt, &space).trim());
-    p!(format!(
-      "{}{}{}: {}",
-      color::Fg(color::Blue),
-      s,
-      color::Fg(color::Reset),
-      text
-    ))
+
+    if use_colors {
+      p!(format!(
+        "{}{}{}: {}",
+        color::Fg(color::Blue),
+        s,
+        color::Fg(color::Reset),
+        text
+      ))
+    } else {
+      p!(format!("{}: {}", s, text))
+    }
   }
 }
 
 // Generic function to print list properties
-fn print_list(s: &str, v: Option<Vec<impl Display>>) {
+fn print_list(s: &str, v: Option<Vec<impl Display>>, use_colors: bool) {
   if let Some(x) = v {
-    pp!(format!(
-      "{}{}{}: ",
-      color::Fg(color::Blue),
-      s,
-      color::Fg(color::Reset)
-    ));
+    if use_colors {
+      pp!(format!(
+        "{}{}{}: ",
+        color::Fg(color::Blue),
+        s,
+        color::Fg(color::Reset)
+      ));
+    } else {
+      pp!(format!("{}: ", s));
+    }
 
     let sx = x.iter().map(|y| s!(y)).collect::<Vec<String>>().join(", ");
 
@@ -191,44 +210,53 @@ fn print_list(s: &str, v: Option<Vec<impl Display>>) {
 }
 
 // Displays an element's properties
-fn show_info(el: Element) {
-  p!(format!(
-    "\n{}{}{} ({}){}{}\n",
-    style::Bold,
-    color::Fg(color::Cyan),
-    el.name.unwrap(),
-    el.symbol.unwrap(),
-    color::Fg(color::Reset),
-    style::Reset
-  ));
+fn show_info(el: Element, use_colors: bool) {
+  if use_colors {
+    p!(format!(
+      "\n{}{}{} ({}){}{}\n",
+      style::Bold,
+      color::Fg(color::Cyan),
+      el.name.unwrap(),
+      el.symbol.unwrap(),
+      color::Fg(color::Reset),
+      style::Reset
+    ));
+  } else {
+    p!(format!(
+      "\n{} ({})\n",
+      el.name.unwrap(),
+      el.symbol.unwrap()
+    ));
+  }
 
-  print("Atomic Number", el.number, "");
-  print("Period Number", el.period, "");
-  print("Category", el.category, "title");
-  print("Summary", el.summary, "");
-  print("Discovered By", el.discovered_by, "");
-  print("Named By", el.named_by, "");
-  print("Appearance", el.appearance, "sentence");
-  print("Atomic Mass", el.atomic_mass, "");
-  print("Phase", el.phase, "");
-  print("Density", el.density, "");
-  print("Color", el.color, "title");
-  print("Molar Heat", el.molar_heat, "");
-  print("Melting Point", el.melt, "");
-  print("Boiling Point", el.boil, "");
-  print_list("Shells", el.shells);
-  print("Electron Configuration", el.electron_configuration, "");
-  print("Electron Affinity", el.electron_affinity, "");
+  print("Atomic Number", el.number, "", use_colors);
+  print("Period Number", el.period, "", use_colors);
+  print("Category", el.category, "title", use_colors);
+  print("Summary", el.summary, "", use_colors);
+  print("Discovered By", el.discovered_by, "", use_colors);
+  print("Named By", el.named_by, "", use_colors);
+  print("Appearance", el.appearance, "sentence", use_colors);
+  print("Atomic Mass", el.atomic_mass, "", use_colors);
+  print("Phase", el.phase, "", use_colors);
+  print("Density", el.density, "", use_colors);
+  print("Color", el.color, "title", use_colors);
+  print("Molar Heat", el.molar_heat, "", use_colors);
+  print("Melting Point", el.melt, "", use_colors);
+  print("Boiling Point", el.boil, "", use_colors);
+  print_list("Shells", el.shells, use_colors);
+  print("Electron Configuration", el.electron_configuration, "", use_colors);
+  print("Electron Affinity", el.electron_affinity, "", use_colors);
   print(
     "Electronegativity Pauling",
     el.electronegativity_pauling,
     "",
+    use_colors,
   );
-  print_list("Ionization Energies", el.ionization_energies);
-  print("X Pos", el.xpos, "");
-  print("Y Pos", el.ypos, "");
-  print("Source", el.source, "");
-  print("Spectral Image", el.spectral_img, "");
+  print_list("Ionization Energies", el.ionization_energies, use_colors);
+  print("X Pos", el.xpos, "", use_colors);
+  print("Y Pos", el.ypos, "", use_colors);
+  print("Source", el.source, "", use_colors);
+  print("Spectral Image", el.spectral_img, "", use_colors);
 
   p!("");
 }
